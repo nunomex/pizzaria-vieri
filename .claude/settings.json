@@ -34,7 +34,12 @@
       "Bash(node \"c:/Users/funsn/Downloads/PROJECTOS/Pizzaria/take-screenshots.mjs\")",
       "Bash(node take-screenshots.mjs)",
       "Bash(git config *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(vercel --version)",
+      "Bash(vercel whoami *)",
+      "Bash(vercel ls *)",
+      "Bash(vercel --prod --yes)",
+      "Bash(vercel --prod --yes --name pizzaria-vieri)"
     ]
   }
 }
