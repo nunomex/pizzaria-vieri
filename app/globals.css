@@ -120,7 +120,7 @@ img {
 @media (max-width: 900px) {
   .nav-links { display: none !important; }
   .about-grid, .loc-grid { grid-template-columns: 1fr !important; }
-  .menu-grid { grid-template-columns: 1fr 1fr !important; }
+  .menu-grid { grid-template-columns: 1fr 1fr !important; gap: 14px !important; }
   .section-pad { padding-left: 28px !important; padding-right: 28px !important; }
   .features-bar {
     flex-wrap: wrap !important;

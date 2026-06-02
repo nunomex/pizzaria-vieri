@@ -100,7 +100,7 @@ export default function MenuSection({ onAdd }: MenuSectionProps) {
         {/* Grid */}
         <div
           className="menu-grid fade-in delay-2"
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 18 }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}
         >
           {items.map((item, i) => {
             const pool = imgPool[sub] ?? []
