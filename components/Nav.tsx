@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { IcoCart, IcoX } from './icons'
+import { goTo } from '@/lib/scroll'
 
 interface NavProps {
   cartCount: number
@@ -14,11 +15,6 @@ const links: [string, string][] = [
   ['A Nossa História', 'about'],
   ['Localização', 'location'],
 ]
-
-function goTo(id: string) {
-  const el = document.getElementById(id)
-  if (el) window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' })
-}
 
 export default function Nav({ cartCount, onCart }: NavProps) {
   const [scrolled, setScrolled] = useState(false)

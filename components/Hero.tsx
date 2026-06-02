@@ -1,12 +1,9 @@
 'use client'
 
+import { goTo } from '@/lib/scroll'
+
 interface HeroProps {
   onMenu: () => void
-}
-
-function goTo(id: string) {
-  const el = document.getElementById(id)
-  if (el) window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' })
 }
 
 export default function Hero({ onMenu }: HeroProps) {

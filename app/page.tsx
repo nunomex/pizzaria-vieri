@@ -12,11 +12,7 @@ import CartDrawer from '@/components/CartDrawer'
 import { IcoWA } from '@/components/icons'
 import { CartItem, MenuItem } from '@/data/menu'
 import { siteConfig } from '@/data/config'
-
-function goTo(id: string) {
-  const el = document.getElementById(id)
-  if (el) window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' })
-}
+import { goTo } from '@/lib/scroll'
 
 export default function Home() {
   const [cart, setCart] = useState<CartItem[]>(() => {
