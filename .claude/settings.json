@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Copy-Item \"c:\\\\Users\\\\funsn\\\\Downloads\\\\PROJECTOS\\\\Pizzaria\\\\uploads\\\\photos-1780347222438.jpg\" \"c:\\\\Users\\\\funsn\\\\Downloads\\\\PROJECTOS\\\\Pizzaria\\\\public\\\\photos-1780347222438.jpg\" -Force)",
+      "Bash(Copy-Item \"c:\\\\Users\\\\funsn\\\\Downloads\\\\PROJECTOS\\\\Pizzaria\\\\uploads\\\\5555.webp\" \"c:\\\\Users\\\\funsn\\\\Downloads\\\\PROJECTOS\\\\Pizzaria\\\\public\\\\5555.webp\" -Force)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(npm run *)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(node -e \"require\\('playwright'\\)\")",
+      "Bash(node -e \"require\\('puppeteer'\\)\")",
+      "Bash(command -v wkhtmltoimage)",
+      "Bash(command -v cutycapt)",
+      "Bash(command -v gnome-screenshot)",
+      "Bash(command -v scrot)",
+      "Read(//usr/**)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(PORT=3001 npm run dev)",
+      "Bash(echo \"PID=$!\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3001)",
+      "Bash(curl -s http://localhost:3001)",
+      "Bash(node -e ' *)",
+      "Read(//opt/**)",
+      "Bash(command -v chromium)",
+      "Bash(command -v google-chrome)",
+      "Bash(command -v brave-browser)",
+      "Bash(command -v firefox)",
+      "Read(//c/Users/funsn/.cache/**)",
+      "Read(//tmp/node_modules/**)",
+      "Read(//mnt/c/Program Files/Google/Chrome/Application/**)",
+      "Read(//mnt/c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
+      "Bash('#menu')",
+      "Bash('#about')",
+      "Bash('#location')",
+      "Bash(node \"c:/Users/funsn/Downloads/PROJECTOS/Pizzaria/take-screenshots.mjs\")",
+      "Bash(node take-screenshots.mjs)",
+      "Bash(git config *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

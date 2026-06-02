@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pizzaria Vieri — Pizza Artesanal Italiana · Esmoriz</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23C8202F' rx='18'/><text x='50' y='76' text-anchor='middle' font-size='66' fill='white' font-family='Georgia,serif' font-style='italic'>V</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: #FAFAF5; color: #1C1C18; overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: inherit; }
+    img { display: block; }
+
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.75s ease, transform 0.75s ease; }
+    .fade-in.in { opacity: 1; transform: translateY(0); }
+    .delay-1 { transition-delay: 0.12s; }
+    .delay-2 { transition-delay: 0.24s; }
+    .delay-3 { transition-delay: 0.36s; }
+
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes mobileMenuIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .mobile-menu-btn { display: none !important; }
+    @media (max-width: 900px) {
+      .mobile-menu-btn { display: flex !important; }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.5; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 1; transform: translateX(-50%) translateY(9px); }
+    }
+    @keyframes drawerIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #C8202F; border-radius: 3px; }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none !important; }
+      .about-grid, .loc-grid { grid-template-columns: 1fr !important; }
+      .menu-grid { grid-template-columns: 1fr 1fr !important; }
+      .section-pad { padding-left: 28px !important; padding-right: 28px !important; }
+      .features-bar { flex-wrap: wrap !important; justify-content: center !important; padding: 28px 24px !important; gap: 20px !important; }
+      .footer-inner { flex-direction: column !important; gap: 20px !important; text-align: center !important; }
+    }
+    @media (max-width: 560px) {
+      .menu-grid { grid-template-columns: 1fr !important; }
+      .hero-sub { display: none !important; }
+      .hero-stats { flex-wrap: wrap !important; gap: 24px !important; }
+      .cart-drawer { width: 100vw !important; }
+    }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+window.V = {
+  whatsapp: '351999000000',
+  phone: '+351 999 000 000',
+  email: 'geral@pizzariavieri.pt',
+  instagram: 'pizzariavieri',
+  address: 'Rua Fernão Veloso 217',
+  city: 'Esmoriz 3885-575, Portugal',
+  mapsUrl: 'https://maps.google.com/?q=Rua+Fernao+Veloso+217+Esmoriz+Portugal',
+  hours: [
+    { day: 'Domingo', open: true,  slots: ['12:00–15:00', '19:00–23:00'] },
+    { day: 'Segunda', open: false },
+    { day: 'Terça',   open: true,  slots: ['12:00–15:00', '19:00–23:00'] },
+    { day: 'Quarta',  open: true,  slots: ['12:00–15:00', '19:00–23:00'] },
+    { day: 'Quinta',  open: true,  slots: ['12:00–15:00', '19:00–23:00'] },
+    { day: 'Sexta',   open: true,  slots: ['12:00–15:00', '19:00–23:00'] },
+    { day: 'Sábado',  open: true,  slots: ['12:00–15:00', '19:00–23:00'] },
+  ],
+  menu: {
+    comida: {
+      pizzas: [
+        { id:'p1', name:'Margherita Tradizionale', desc:'Molho San Marzano, fior di latte, manjericão fresco, azeite extra virgem', price:9.50,  tag:'Clássica'    },
+        { id:'p2', name:'Diavola',                  desc:'Molho de tomate, mozzarella, salame piccante, pimenta calabresa',             price:11.00, tag:'Picante'     },
+        { id:'p3', name:'Quattro Formaggi',         desc:'Mozzarella, gorgonzola, parmesão 24 meses, provolone fumado',                 price:12.00                   },
+        { id:'p4', name:'Prosciutto & Rúcula',      desc:'Mozzarella, presunto cru italiano, rúcula fresca, parmesão em lascas',        price:13.50                   },
+        { id:'p5', name:'Tartufo Nero',             desc:'Creme de trufa negra, mozzarella, cogumelos porcini, parmesão',               price:15.00, tag:'Especial'    },
+        { id:'p6', name:'Burrata & Pomodorini',     desc:'Burrata fresca, tomates cherry, manjericão, azeite DOP',                     price:13.00                   },
+        { id:'p7', name:'Vieri — Assinatura',       desc:'Creme de tomate assado, mozzarella fumada, nduja, mel de rosmaninho, nozes',  price:14.50, tag:'Assinatura'  },
+        { id:'p8', name:'Ortolana',                 desc:'Beringela grelhada, pimentos assados, azeitonas, alcaparras',                price:10.50, tag:'Vegetariana' },
+      ],
+      massas: [
+        { id:'m1', name:'Spaghetti al Pomodoro',  desc:'Molho de tomate San Marzano, manjericão fresco, azeite extra virgem',        price:9.00  },
+        { id:'m2', name:'Penne all\'Arrabbiata',  desc:'Molho de tomate picante, alho, azeite, pimenta calabresa',                   price:9.50, tag:'Picante' },
+        { id:'m3', name:'Tagliatelle al Ragù',    desc:'Ragù bolonhesa clássico cozinhado 4 horas, parmesão ralado',                 price:12.50 },
+        { id:'m4', name:'Pasta ai Funghi',        desc:'Creme de cogumelos porcini, alho, natas, parmesão, salsa',                  price:11.00 },
+        { id:'m5', name:'Rigatoni alla Norma',    desc:'Molho de tomate, beringela frita, ricotta salata, manjericão',               price:10.50, tag:'Vegetariana' },
+        { id:'m6', name:'Spaghetti Carbonara',    desc:'Guanciale, ovo, pecorino romano, pimenta preta — receita original',         price:12.00, tag:'Clássica' },
+      ],
+      entradas: [
+        { id:'e1', name:'Bruschetta al Pomodoro', desc:'Pão tostado, tomate cherry, alho, azeite DOP, manjericão fresco',           price:5.50  },
+        { id:'e2', name:'Burrata com Rúcula',     desc:'Burrata fresca, rúcula, tomates cherry, pesto de manjericão, azeite',       price:8.50  },
+        { id:'e3', name:'Tábua Italiana',         desc:'Presunto cru, salame piccante, provolone, azeitonas, pão artesanal',        price:12.50 },
+        { id:'e4', name:'Arancini di Riso',       desc:'Bolinhas de arroz recheadas com ragù e mozzarella, fritas no momento',     price:7.00  },
+        { id:'e5', name:'Carpaccio di Manzo',     desc:'Carpaccio de novilho, rúcula, parmesão em lascas, alcaparras, limão',      price:10.50, tag:'Especial' },
+      ],
+      saladas: [
+        { id:'sl1', name:'Salada Caprese',        desc:'Mozzarella fresca, tomate, manjericão, azeite DOP, flor de sal',            price:8.50  },
+        { id:'sl2', name:'Salada Rúcula & Parmesão', desc:'Rúcula fresca, parmesão em lascas, nozes, limão, azeite',               price:7.50  },
+        { id:'sl3', name:'Salada César',          desc:'Alface romana, croutons, parmesão, anchovas, molho césar caseiro',         price:8.00  },
+        { id:'sl4', name:'Salada Mediterrânea',   desc:'Mix de folhas, azeitonas, tomate cherry, feta, pepino, vinagrete',         price:7.00  },
+      ],
+    },
+    bebida: {
+      aguas: [
+        { id:'ag1', name:'Água Mineral sem Gás',  desc:'50cl',              price:1.50 },
+        { id:'ag2', name:'Água Mineral com Gás',  desc:'50cl',              price:1.50 },
+        { id:'ag3', name:'Água Mineral sem Gás',  desc:'1 litro',           price:2.50 },
+        { id:'ag4', name:'Água Mineral com Gás',  desc:'1 litro',           price:2.50 },
+      ],
+      refrigerantes: [
+        { id:'r1', name:'Coca-Cola Original',     desc:'33cl, lata',        price:2.50 },
+        { id:'r2', name:'Coca-Cola Zero',         desc:'33cl, lata',        price:2.50 },
+        { id:'r3', name:'Sprite',                 desc:'33cl, lata',        price:2.50 },
+        { id:'r4', name:'Sumol Laranja',          desc:'33cl, lata',        price:2.50 },
+        { id:'r5', name:'Limonada Siciliana',     desc:'Limão, hortelã, xarope de cana, água com gás — copo',   price:3.50, tag:'Casa' },
+        { id:'r6', name:'Sumo de Laranja Natural',desc:'Espremido na hora — copo',                              price:3.00, tag:'Natural' },
+      ],
+      cerveja: [
+        { id:'c1', name:'Sagres',                 desc:'33cl, garrafa',     price:2.80 },
+        { id:'c2', name:'Super Bock',             desc:'33cl, garrafa',     price:2.80 },
+        { id:'c3', name:'Peroni',                 desc:'33cl, garrafa — Italiana',  price:3.20, tag:'Italiana' },
+        { id:'c4', name:'Cerveja Artesanal IPA',  desc:'33cl — artesanal portuguesa', price:3.80, tag:'Artesanal' },
+      ],
+      cafetaria: [
+        { id:'cf1', name:'Espresso',              desc:'Café curto',        price:1.20 },
+        { id:'cf2', name:'Café Duplo',            desc:'Dois expressos',    price:1.80 },
+        { id:'cf3', name:'Café com Leite',        desc:'Meia de leite',     price:1.50 },
+        { id:'cf4', name:'Cappuccino',            desc:'Espresso, leite vaporizado, espuma',  price:2.20 },
+        { id:'cf5', name:'Chá',                   desc:'Várias infusões à escolha',           price:1.80 },
+        { id:'cf6', name:'Tiramisù della Nonna',  desc:'Sobremesa da casa — mascarpone, café espresso, cacau', price:5.50, tag:'Sobremesa' },
+      ],
+    },
+  }
+};
+</script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+const V = window.V;
+
+const goTo = (id) => {
+  const el = document.getElementById(id);
+  if (el) window.scrollTo({ top: el.offsetTop - 72, behavior: 'smooth' });
+};
+
+/* ── ICONS ── */
+const IcoCart = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+  </svg>
+);
+const IcoX = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+const IcoPin = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8202F" strokeWidth="2" strokeLinecap="round">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+  </svg>
+);
+const IcoPhone = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8202F" strokeWidth="2" strokeLinecap="round">
+    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.72 11.5a19.79 19.79 0 01-3.07-8.67A2 2 0 013.63 1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.91 8.6a16 16 0 006.29 6.29l.97-.97a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+  </svg>
+);
+const IcoMail = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8202F" strokeWidth="2" strokeLinecap="round">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/>
+  </svg>
+);
+const IcoIG = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C8202F" strokeWidth="2" strokeLinecap="round">
+    <rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+  </svg>
+);
+const IcoWA = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+);
+
+/* ── NAV ── */
+function Nav({ cartCount, onCart }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 70);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  const links = [['Início','hero'],['Menu','menu'],['A Nossa História','about'],['Localização','location']];
+
+  const handleLink = (id) => { goTo(id); setMobileOpen(false); };
+
+  const s = {
+    nav: {
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999,
+      height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 56px',
+      background: (scrolled || mobileOpen) ? 'rgba(250,250,245,0.97)' : 'transparent',
+      borderBottom: (scrolled || mobileOpen) ? '1px solid #EDE9DF' : 'none',
+      backdropFilter: (scrolled || mobileOpen) ? 'blur(16px)' : 'none',
+      transition: 'background 0.4s, border-color 0.4s, backdrop-filter 0.4s',
+    },
+    logoLabel: {
+      fontFamily: 'DM Sans', fontSize: 10, letterSpacing: '0.32em',
+      textTransform: 'uppercase', color: (scrolled || mobileOpen) ? '#C8202F' : 'rgba(255,255,255,0.75)', marginBottom: 2,
+    },
+    logoName: {
+      fontFamily: 'Cormorant Garamond', fontSize: 26, fontStyle: 'italic',
+      fontWeight: 500, color: (scrolled || mobileOpen) ? '#1C1C18' : '#fff', lineHeight: 1,
+    },
+    link: {
+      background: 'none', border: 'none', padding: '4px 0',
+      fontFamily: 'DM Sans', fontSize: 12, letterSpacing: '0.12em',
+      textTransform: 'uppercase', color: scrolled ? '#1C1C18' : 'rgba(255,255,255,0.88)',
+      fontWeight: 400, transition: 'opacity 0.2s',
+    },
+    cartBtn: {
+      display: 'flex', alignItems: 'center', gap: 8, padding: '10px 20px',
+      background: (scrolled || mobileOpen) ? '#C8202F' : 'rgba(255,255,255,0.15)',
+      border: (scrolled || mobileOpen) ? 'none' : '1px solid rgba(255,255,255,0.45)',
+      color: '#fff', borderRadius: 6,
+      fontFamily: 'DM Sans', fontSize: 13, fontWeight: 500,
+      backdropFilter: (scrolled || mobileOpen) ? 'none' : 'blur(8px)',
+      transition: 'background 0.3s',
+    },
+  };
+
+  return (
+    <>
+      <nav style={s.nav}>
+        <div onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ cursor: 'pointer', userSelect: 'none' }}>
+          <div style={s.logoLabel}>Pizzaria</div>
+          <div style={s.logoName}>Vieri</div>
+        </div>
+
+        <div className="nav-links" style={{ display: 'flex', gap: 32 }}>
+          {links.map(([l, id]) => (
+            <button key={id} onClick={() => handleLink(id)} style={s.link}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.6'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}>{l}</button>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button onClick={onCart} style={s.cartBtn}>
+            <IcoCart />
+            Carrinho
+            {cartCount > 0 && (
+              <span style={{ background: '#fff', color: '#C8202F', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700 }}>{cartCount}</span>
+            )}
+          </button>
+
+          {/* Hamburger */}
+          <button className="mobile-menu-btn" onClick={() => setMobileOpen(o => !o)} style={{
+            background: 'none', border: 'none', padding: 8, display: 'flex', flexDirection: 'column',
+            gap: 5, cursor: 'pointer', color: (scrolled || mobileOpen) ? '#1C1C18' : '#fff',
+          }}>
+            {mobileOpen ? <IcoX /> : (
+              <>
+                <span style={{ width: 22, height: 2, background: 'currentColor', borderRadius: 2, display: 'block' }} />
+                <span style={{ width: 22, height: 2, background: 'currentColor', borderRadius: 2, display: 'block' }} />
+                <span style={{ width: 16, height: 2, background: 'currentColor', borderRadius: 2, display: 'block' }} />
+              </>
+            )}
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile menu overlay */}
+      {mobileOpen && (
+        <div style={{
+          position: 'fixed', top: 72, left: 0, right: 0, bottom: 0, zIndex: 998,
+          background: 'rgba(250,250,245,0.98)', backdropFilter: 'blur(16px)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          gap: 8, animation: 'mobileMenuIn 0.25s ease',
+        }}>
+          {links.map(([l, id]) => (
+            <button key={id} onClick={() => handleLink(id)} style={{
+              background: 'none', border: 'none', fontFamily: 'Cormorant Garamond',
+              fontSize: 42, fontWeight: 400, color: '#1C1C18', letterSpacing: '0.02em',
+              padding: '10px 20px', cursor: 'pointer', transition: 'color 0.2s',
+            }}
+              onMouseEnter={e => e.currentTarget.style.color = '#C8202F'}
+              onMouseLeave={e => e.currentTarget.style.color = '#1C1C18'}>
+              {l}
+            </button>
+          ))}
+          <button onClick={() => { onCart(); setMobileOpen(false); }} style={{
+            marginTop: 24, display: 'flex', alignItems: 'center', gap: 10,
+            background: '#C8202F', color: '#fff', border: 'none', borderRadius: 8,
+            padding: '14px 32px', fontFamily: 'DM Sans', fontSize: 14, fontWeight: 600,
+            letterSpacing: '0.06em', cursor: 'pointer',
+          }}>
+            <IcoCart /> Carrinho {cartCount > 0 && `(${cartCount})`}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ── HERO ── */
+function Hero({ onMenu }) {
+  return (
+    <section id="hero" data-screen-label="Hero" style={{ position: 'relative', height: '100vh', minHeight: 580, overflow: 'hidden' }}>
+      <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1920&q=85" alt="Pizza Vieri"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, rgba(12,12,10,0.42) 0%, rgba(12,12,10,0.08) 50%, rgba(12,12,10,0.68) 100%)' }} />
+
+      <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 28px' }}>
+        <div style={{ fontFamily: 'DM Sans', fontSize: 11, letterSpacing: '0.38em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.65)', marginBottom: 22, animation: 'heroFadeUp 0.9s ease both' }}>
+          Pizza Artesanal Italiana · Esmoriz, Portugal
+        </div>
+
+        <h1 style={{ fontFamily: 'Cormorant Garamond', color: '#fff', fontSize: 'clamp(54px, 9vw, 104px)', fontWeight: 400, lineHeight: 1.0, margin: '0 0 6px', textShadow: '0 2px 28px rgba(0,0,0,0.22)', textWrap: 'balance', animation: 'heroFadeUp 1s ease both', animationDelay: '0.2s' }}>
+          Artesanal.<br /><em>Italiana.</em><br />Irresistível.
+        </h1>
+
+        <p className="hero-sub" style={{ fontFamily: 'DM Sans', fontSize: 16, color: 'rgba(255,255,255,0.68)', margin: '22px 0 40px', maxWidth: 420, lineHeight: 1.7, animation: 'heroFadeUp 0.9s ease both', animationDelay: '0.5s' }}>
+          Massa de fermentação lenta 48h, ingredientes<br />DOP importados de Itália, forno a lenha.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', animation: 'heroFadeUp 0.9s ease both', animationDelay: '0.75s' }}>
+          <button onClick={onMenu} style={{ padding: '14px 36px', background: '#fff', color: '#1C1C18', border: 'none', borderRadius: 5, fontFamily: 'DM Sans', fontSize: 12, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', transition: 'opacity 0.2s' }}
+            onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+            onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+            Ver Menu
+          </button>
+          <button onClick={() => goTo('about')} style={{ padding: '14px 36px', background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,0.5)', borderRadius: 5, fontFamily: 'DM Sans', fontSize: 12, fontWeight: 400, letterSpacing: '0.14em', textTransform: 'uppercase', backdropFilter: 'blur(6px)' }}>
+            A Nossa História
+          </button>
+        </div>
+      </div>
+
+      <div style={{ position: 'absolute', bottom: 34, left: '50%', animation: 'scrollPulse 2.4s ease-in-out infinite', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, color: 'rgba(255,255,255,0.45)', fontFamily: 'DM Sans', fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+        <svg width="14" height="22" viewBox="0 0 14 22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+          <rect x="1" y="1" width="12" height="16" rx="6" /><line x1="7" y1="5" x2="7" y2="9" />
+        </svg>
+        Scroll
+      </div>
+    </section>
+  );
+}
+
+/* ── FEATURES BAR ── */
+function FeaturesBar() {
+  const items = ['Massa de 48 Horas', 'Forno a Lenha', 'Ingredientes DOP', 'Tradizione Napoletana'];
+  return (
+    <div className="features-bar" style={{ background: '#1C1C18', padding: '26px 80px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0 }}>
+      {items.map((item, i) => (
+        <React.Fragment key={item}>
+          <span style={{ fontFamily: 'DM Sans', fontSize: 11, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>{item}</span>
+          {i < items.length - 1 && <span style={{ color: '#C8202F', fontSize: 22, margin: '0 28px', opacity: 0.8, lineHeight: 1 }}>·</span>}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+/* ── MENU CARD ── */
+function MenuCard({ item, onAdd }) {
+  const [added, setAdded] = useState(false);
+  const handle = () => { onAdd(item); setAdded(true); setTimeout(() => setAdded(false), 1500); };
+  return (
+    <div style={{ background: '#fff', borderRadius: 10, border: '1px solid #EDE9DF', padding: '13px 14px', display: 'flex', gap: 13, alignItems: 'flex-start', transition: 'box-shadow 0.22s, transform 0.2s' }}
+      onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 6px 24px rgba(0,0,0,0.08)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.transform = 'translateY(0)'; }}>
+
+      {/* Thumbnail */}
+      <div style={{ width: 78, height: 78, borderRadius: 8, flexShrink: 0, overflow: 'hidden', background: '#F5EFE6' }}>
+        {item.img && <img src={item.img} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />}
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {item.tag && (
+          <span style={{ alignSelf: 'flex-start', background: '#FDEAEC', color: '#C8202F', borderRadius: 3, padding: '1px 7px', marginBottom: 4, fontFamily: 'DM Sans', fontSize: 9, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase' }}>{item.tag}</span>
+        )}
+        <h3 style={{ fontFamily: 'Cormorant Garamond', fontSize: 18, fontWeight: 500, lineHeight: 1.2, marginBottom: 3 }}>{item.name}</h3>
+        <p style={{ fontFamily: 'DM Sans', fontSize: 11.5, color: '#aaa', lineHeight: 1.5, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{item.desc}</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: 8 }}>
+          <span style={{ fontFamily: 'Cormorant Garamond', fontSize: 22, fontWeight: 600 }}>€{item.price.toFixed(2)}</span>
+          <button onClick={handle} style={{ background: added ? '#FDEAEC' : '#C8202F', color: added ? '#C8202F' : '#fff', border: 'none', borderRadius: 6, padding: '7px 15px', fontFamily: 'DM Sans', fontSize: 12, fontWeight: 600, transition: 'all 0.25s', whiteSpace: 'nowrap' }}>
+            {added ? '✓ Ok' : '+ Adicionar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── MENU SECTION ── */
+const imgPool = {
+  pizzas:        ['1574071318508-1cdbab80d002','1565299624946-b28f40a0ae38','1513104890138-7c749659a591','1571997478779-2adcbbe9ab2f','1574071318508-1cdbab80d002','1565299624946-b28f40a0ae38','1513104890138-7c749659a591','1571997478779-2adcbbe9ab2f'],
+  massas:        ['1612874742237-6526221588e3','1621996346565-e3dbc646d9a9','1551183053-bf91798d047b','1563379926898-05f4575a45d8','1612874742237-6526221588e3','1621996346565-e3dbc646d9a9'],
+  entradas:      ['1572695157366-5e585ab2b69f','1546069901-ba9599a7e63c','1512621776951-a57141f2eefd','1606914501449-5a96b6ce24ca','1517244683847-7456b63c5969'],
+  saladas:       ['1546069901-ba9599a7e63c','1512621776951-a57141f2eefd','1473093295043-cdd812d0e601','1547496502-affea7c54d48'],
+  aguas:         ['1548839140-29a749e1cf4d','1505740420928-5e560c06d30e','1548839140-29a749e1cf4d','1505740420928-5e560c06d30e'],
+  refrigerantes: ['1554866585-cd94860890b7','1581636625402-6fcf9f51e9b7','1554866585-cd94860890b7','1629203851122-3726f0b8b9f1','1554866585-cd94860890b7','1581636625402-6fcf9f51e9b7'],
+  cerveja:       ['1535958636474-b021ee887b13','1571613316887-6f8d5cbf7ef7','1575367439058-6096bb9cf5e2','1535958636474-b021ee887b13'],
+  cafetaria:     ['1510591509098-f4fdc6d0ff04','1572442388796-11668a67e53d','1497515114629-f71d768fd85c','1510591509098-f4fdc6d0ff04','1572442388796-11668a67e53d','1571877227200-a0d98ea607e9'],
+};
+
+function MenuSection({ onAdd }) {
+  const cats = {
+    comida: [['pizzas','Pizzas'],['massas','Massas'],['entradas','Entradas'],['saladas','Saladas']],
+    bebida: [['aguas','Águas'],['refrigerantes','Refrigerantes'],['cerveja','Cerveja'],['cafetaria','Cafetaria']],
+  };
+  const [main, setMain] = useState('comida');
+  const [sub,  setSub]  = useState('pizzas');
+  const switchMain = (m) => { setMain(m); setSub(cats[m][0][0]); };
+  const items = (V.menu[main] && V.menu[main][sub]) ? V.menu[main][sub] : [];
+
+  return (
+    <section id="menu" data-screen-label="Menu" className="section-pad fade-in" style={{ padding: '96px 80px', background: '#FAFAF5' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+
+        {/* Header */}
+        <div className="fade-in" style={{ textAlign: 'center', marginBottom: 48 }}>
+          <h2 style={{ fontFamily: 'Cormorant Garamond', fontSize: 'clamp(52px,7vw,86px)', fontWeight: 500, lineHeight: 1, letterSpacing: '-0.01em', color: '#1C1C18' }}>
+            O Nosso <em style={{ color: '#C8202F' }}>Menu</em>
+          </h2>
+        </div>
+
+        {/* Main tabs: Comida | Bebida */}
+        <div className="fade-in delay-1" style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}>
+          <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid #E0DBD0' }}>
+            {[['comida','Comida'],['bebida','Bebida']].map(([id, label]) => (
+              <button key={id} onClick={() => switchMain(id)} style={{
+                padding: '12px 52px', border: 'none',
+                background: main === id ? '#1C1C18' : '#fff',
+                color: main === id ? '#fff' : '#888',
+                fontFamily: 'DM Sans', fontSize: 13, fontWeight: main === id ? 600 : 400,
+                letterSpacing: '0.1em', textTransform: 'uppercase', transition: 'all 0.22s',
+              }}>{label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Sub tabs */}
+        <div className="fade-in delay-1" style={{ display: 'flex', justifyContent: 'center', marginBottom: 44 }}>
+          <div style={{ background: '#F0EBE0', borderRadius: 9, padding: 4, display: 'flex', gap: 3, flexWrap: 'wrap', justifyContent: 'center' }}>
+            {cats[main].map(([id, label]) => (
+              <button key={id} onClick={() => setSub(id)} style={{
+                padding: '9px 26px', border: 'none', borderRadius: 7,
+                background: sub === id ? '#C8202F' : 'transparent',
+                color: sub === id ? '#fff' : '#777',
+                fontFamily: 'DM Sans', fontSize: 13, fontWeight: sub === id ? 600 : 400,
+                transition: 'all 0.22s',
+              }}>{label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Grid */}
+        <div className="menu-grid fade-in delay-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 18 }}>
+          {items.map((item, i) => {
+            const pool = imgPool[sub] || [];
+            const photoId = pool[i % pool.length];
+            const img = photoId ? `https://images.unsplash.com/photo-${photoId}?w=160&h=160&fit=crop&q=72` : null;
+            return <MenuCard key={item.id} item={{ ...item, img }} onAdd={onAdd} />;
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── ABOUT ── */
+function About() {
+  return (
+    <section id="about" data-screen-label="A Nossa História" className="section-pad" style={{ padding: '96px 80px', background: '#fff' }}>
+      <div className="about-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72, alignItems: 'center' }}>
+        <div className="fade-in">
+          <div style={{ fontFamily: 'DM Sans', fontSize: 10, letterSpacing: '0.38em', textTransform: 'uppercase', color: '#C8202F', marginBottom: 20 }}>A Nossa História</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond', fontSize: 'clamp(34px,4vw,52px)', fontWeight: 400, lineHeight: 1.15, marginBottom: 24 }}>
+            Uma receita de família,<br /><em>com alma italiana.</em>
+          </h2>
+          <p style={{ fontFamily: 'DM Sans', fontSize: 15, lineHeight: 1.82, color: '#5C5C50', marginBottom: 20 }}>
+            A Pizzaria Vieri nasceu do amor pela autêntica tradição italiana. Cada pizza começa com uma massa de fermentação lenta de 48 horas — leve, aromática, com aquela textura única que só o tempo consegue criar.
+          </p>
+          <p style={{ fontFamily: 'DM Sans', fontSize: 15, lineHeight: 1.82, color: '#5C5C50', marginBottom: 40 }}>
+            Os nossos ingredientes são cuidadosamente selecionados: tomates San Marzano da Campânia, mozzarella fior di latte, azeite DOP. Trazemos Itália até Esmoriz, numa fatia de cada vez.
+          </p>
+          <div className="hero-stats" style={{ display: 'flex', gap: 40 }}>
+            {[['48h','Fermentação da massa'],['100%','Ingredientes naturais'],['Nápoles','Receita de origem']].map(([n, l]) => (
+              <div key={l}>
+                <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 33, fontWeight: 600, color: '#C8202F' }}>{n}</div>
+                <div style={{ fontFamily: 'DM Sans', fontSize: 11, color: '#aaa', marginTop: 4, maxWidth: 84, lineHeight: 1.4 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="fade-in delay-2" style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', aspectRatio: '4/5' }}>
+          <img src="uploads/photos-1780347222438.jpg" alt="A nossa pizza" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', bottom: 20, left: 20, right: 20, background: 'rgba(255,255,255,0.93)', borderRadius: 8, padding: '16px 20px', backdropFilter: 'blur(10px)' }}>
+            <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 18, fontStyle: 'italic', lineHeight: 1.45 }}>"Ogni pizza è un'opera d'arte."</div>
+            <div style={{ fontFamily: 'DM Sans', fontSize: 11, color: '#aaa', marginTop: 6 }}>— Família Vieri</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── LOCATION ── */
+function Location() {
+  const today = new Date().getDay();
+  return (
+    <section id="location" data-screen-label="Localização" className="section-pad" style={{ background: '#1C1C18', padding: '96px 80px', color: '#FAFAF5' }}>
+      <div className="loc-grid" style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 72 }}>
+        <div className="fade-in">
+          <div style={{ fontFamily: 'DM Sans', fontSize: 10, letterSpacing: '0.38em', textTransform: 'uppercase', color: '#C8202F', marginBottom: 20 }}>Encontra-nos</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond', fontSize: 'clamp(34px,4vw,52px)', fontWeight: 400, lineHeight: 1.15, marginBottom: 40 }}>
+            Horários<br /><em>&amp; Localização</em>
+          </h2>
+
+          <div style={{ marginBottom: 40 }}>
+            {V.hours.map((h, i) => {
+              const isTd = i === today;
+              return (
+                <div key={h.day} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '11px 12px', borderBottom: '1px solid rgba(255,255,255,0.07)', background: isTd ? 'rgba(200,32,47,0.14)' : 'transparent', borderRadius: isTd ? 5 : 0 }}>
+                  <span style={{ fontFamily: 'DM Sans', fontSize: 13, color: isTd ? '#F5A0A8' : 'rgba(255,255,255,0.5)', fontWeight: isTd ? 600 : 400 }}>
+                    {h.day}{isTd ? ' · hoje' : ''}
+                  </span>
+                  <span style={{ fontFamily: 'DM Sans', fontSize: 13, color: h.open ? 'rgba(255,255,255,0.82)' : '#E05555', textAlign: 'right' }}>
+                    {h.open ? h.slots.join('  ·  ') : 'Fechado'}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {[
+              [<IcoPin />, V.address + ', ' + V.city, V.mapsUrl, '_blank'],
+              [<IcoPhone />, V.phone, `tel:${V.phone.replace(/\s/g, '')}`, '_self'],
+              [<IcoMail />, V.email, `mailto:${V.email}`, '_self'],
+              [<IcoIG />, '@' + V.instagram, `https://instagram.com/${V.instagram}`, '_blank'],
+            ].map(([ico, text, href, target]) => (
+              <a key={text} href={href} target={target} style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'rgba(255,255,255,0.58)', fontFamily: 'DM Sans', fontSize: 14, transition: 'color 0.2s' }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.92)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.58)'}>
+                {ico} {text}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <div className="fade-in delay-2" style={{ display: 'flex', alignItems: 'flex-start', paddingTop: 8 }}>
+          <div style={{ width: '100%', borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <iframe
+              src="https://maps.google.com/maps?q=Rua+Fernao+Veloso+217,+Esmoriz,+Portugal&output=embed&z=15&hl=pt"
+              width="100%" height="400" style={{ border: 0, display: 'block' }}
+              allowFullScreen="" loading="lazy" title="Localização Pizzaria Vieri" />
+            <a href={V.mapsUrl} target="_blank" style={{ display: 'block', background: '#C8202F', color: '#fff', textAlign: 'center', padding: '14px', fontFamily: 'DM Sans', fontSize: 13, fontWeight: 600, letterSpacing: '0.06em', transition: 'background 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#A0181F'}
+              onMouseLeave={e => e.currentTarget.style.background = '#C8202F'}>
+              Abrir no Google Maps →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FOOTER ── */
+function Footer() {
+  return (
+    <footer style={{ background: '#111110', padding: '36px 60px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="footer-inner" style={{ maxWidth: 1100, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontFamily: 'DM Sans', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#C8202F', marginBottom: 4 }}>Pizzaria</div>
+          <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 22, fontStyle: 'italic', color: 'rgba(255,255,255,0.85)' }}>Vieri</div>
+        </div>
+        <div style={{ fontFamily: 'DM Sans', fontSize: 12, color: 'rgba(255,255,255,0.28)', textAlign: 'center', lineHeight: 1.75 }}>
+          © 2025 Pizzaria Vieri · Todos os direitos reservados<br />
+          Rua Fernão Veloso 217, Esmoriz 3885-575, Portugal
+        </div>
+        <a href={`https://instagram.com/${V.instagram}`} target="_blank" style={{ fontFamily: 'DM Sans', fontSize: 12, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.38)', transition: 'color 0.2s' }}
+          onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.7)'}
+          onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.38)'}>
+          Instagram
+        </a>
+      </div>
+    </footer>
+  );
+}
+
+/* ── CART DRAWER ── */
+function CartDrawer({ items, onClose, onUpdate }) {
+  const [step, setStep] = useState('cart');
+  const [name, setName] = useState('');
+  const [addr, setAddr] = useState('');
+  const [mode, setMode] = useState('entrega');
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const count = items.reduce((s, i) => s + i.qty, 0);
+
+  const canSend = name.trim() && (mode === 'levantamento' || addr.trim());
+
+  const send = () => {
+    let msg = `🍕 *Pedido — Pizzaria Vieri*\n\n`;
+    items.forEach(i => { msg += `• ${i.qty}× ${i.name} — €${(i.price * i.qty).toFixed(2)}\n`; });
+    msg += `\n*Total: €${total.toFixed(2)}*\n\n*Nome:* ${name}\n`;
+    if (mode === 'entrega') msg += `*Morada:* ${addr}\n*Tipo:* Entrega ao domicílio\n`;
+    else msg += `*Tipo:* Levantamento em loja\n`;
+    window.open(`https://wa.me/${V.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
+  return (
+    <>
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.48)', zIndex: 1100, animation: 'overlayIn 0.25s ease' }} />
+      <div className="cart-drawer" style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: 420, maxWidth: '100vw', background: '#FAFAF5', zIndex: 1200, display: 'flex', flexDirection: 'column', boxShadow: '-6px 0 44px rgba(0,0,0,0.18)', animation: 'drawerIn 0.3s cubic-bezier(0.32,0.72,0,1)' }}>
+
+        {/* Header */}
+        <div style={{ padding: '24px 28px', borderBottom: '1px solid #EDE9DF', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <div>
+            <div style={{ fontFamily: 'DM Sans', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#C8202F', marginBottom: 4 }}>O teu pedido</div>
+            <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 26, fontWeight: 500 }}>
+              Carrinho {count > 0 && <span style={{ fontSize: 18, color: '#bbb' }}>({count})</span>}
+            </div>
+          </div>
+          <button onClick={onClose} style={{ background: 'none', border: '1px solid #E8E3D8', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#666' }}>
+            <IcoX />
+          </button>
+        </div>
+
+        {/* Body */}
+        {items.length === 0 ? (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#ccc', fontFamily: 'DM Sans', gap: 10 }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <div style={{ fontSize: 15 }}>O carrinho está vazio</div>
+            <div style={{ fontSize: 13, color: '#ddd' }}>Adiciona itens do menu</div>
+          </div>
+        ) : (
+          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 28px' }}>
+            {step === 'cart' ? items.map(item => (
+              <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 0', borderBottom: '1px solid #F0EAE0' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontFamily: 'Cormorant Garamond', fontSize: 17, fontWeight: 500, lineHeight: 1.2 }}>{item.name}</div>
+                  <div style={{ fontFamily: 'DM Sans', fontSize: 12, color: '#bbb', marginTop: 3 }}>€{item.price.toFixed(2)} cada</div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button onClick={() => onUpdate(item.id, item.qty - 1)} style={{ width: 28, height: 28, borderRadius: '50%', border: '1px solid #E5E0D5', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Sans', fontSize: 18, lineHeight: 1, color: '#555' }}>−</button>
+                  <span style={{ fontFamily: 'DM Sans', fontWeight: 600, minWidth: 20, textAlign: 'center', fontSize: 14 }}>{item.qty}</span>
+                  <button onClick={() => onUpdate(item.id, item.qty + 1)} style={{ width: 28, height: 28, borderRadius: '50%', border: 'none', background: '#C8202F', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Sans', fontSize: 18, lineHeight: 1 }}>+</button>
+                </div>
+                <div style={{ fontFamily: 'DM Sans', fontWeight: 600, fontSize: 14, minWidth: 52, textAlign: 'right' }}>€{(item.price * item.qty).toFixed(2)}</div>
+              </div>
+            )) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18, paddingTop: 4 }}>
+                <div>
+                  <label style={{ fontFamily: 'DM Sans', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#888', display: 'block', marginBottom: 8 }}>Nome *</label>
+                  <input value={name} onChange={e => setName(e.target.value)} placeholder="O teu nome completo" style={{ width: '100%', padding: '12px 14px', border: '1px solid #E5E0D5', borderRadius: 7, fontFamily: 'DM Sans', fontSize: 14, outline: 'none', background: 'white' }} />
+                </div>
+                <div>
+                  <label style={{ fontFamily: 'DM Sans', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#888', display: 'block', marginBottom: 8 }}>Tipo de pedido</label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {[['entrega','Entrega'],['levantamento','Levantamento']].map(([v, l]) => (
+                      <button key={v} onClick={() => setMode(v)} style={{ flex: 1, padding: '10px', borderRadius: 7, border: '1px solid ' + (mode === v ? '#C8202F' : '#E5E0D5'), background: mode === v ? '#FDEAEC' : 'white', color: mode === v ? '#C8202F' : '#888', fontFamily: 'DM Sans', fontSize: 13, fontWeight: mode === v ? 600 : 400 }}>{l}</button>
+                    ))}
+                  </div>
+                </div>
+                {mode === 'entrega' && (
+                  <div>
+                    <label style={{ fontFamily: 'DM Sans', fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#888', display: 'block', marginBottom: 8 }}>Morada de entrega *</label>
+                    <input value={addr} onChange={e => setAddr(e.target.value)} placeholder="Rua, número, localidade" style={{ width: '100%', padding: '12px 14px', border: '1px solid #E5E0D5', borderRadius: 7, fontFamily: 'DM Sans', fontSize: 14, outline: 'none', background: 'white' }} />
+                  </div>
+                )}
+                <div style={{ background: '#F5F0E6', borderRadius: 7, padding: '12px 14px', fontFamily: 'DM Sans', fontSize: 12, color: '#999', lineHeight: 1.65 }}>
+                  Ao confirmar, serás redirecionado para o WhatsApp para finalizar o teu pedido.
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Footer */}
+        {items.length > 0 && (
+          <div style={{ padding: '20px 28px', borderTop: '1px solid #EDE9DF', background: 'white', flexShrink: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 16 }}>
+              <span style={{ fontFamily: 'DM Sans', fontSize: 13, color: '#999' }}>Total do pedido</span>
+              <span style={{ fontFamily: 'Cormorant Garamond', fontSize: 28, fontWeight: 600 }}>€{total.toFixed(2)}</span>
+            </div>
+            {step === 'cart' ? (
+              <button onClick={() => setStep('details')} style={{ width: '100%', padding: 15, background: '#C8202F', color: 'white', border: 'none', borderRadius: 8, fontFamily: 'DM Sans', fontSize: 14, fontWeight: 600, letterSpacing: '0.04em' }}>
+                Avançar para a encomenda →
+              </button>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <button onClick={send} disabled={!canSend} style={{ width: '100%', padding: 15, background: canSend ? '#25D366' : '#ccc', color: 'white', border: 'none', borderRadius: 8, fontFamily: 'DM Sans', fontSize: 14, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: canSend ? 'pointer' : 'not-allowed' }}>
+                  <IcoWA size={17} /> Confirmar via WhatsApp
+                </button>
+                <button onClick={() => setStep('cart')} style={{ background: 'none', border: '1px solid #E5E0D5', borderRadius: 8, padding: 11, fontFamily: 'DM Sans', fontSize: 13, color: '#888' }}>← Voltar ao carrinho</button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ── APP ── */
+function App() {
+  const [cart, setCart] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('vieri-cart') || '[]'); } catch { return []; }
+  });
+  const [cartOpen, setCartOpen] = useState(false);
+
+  useEffect(() => {
+    try { localStorage.setItem('vieri-cart', JSON.stringify(cart)); } catch {}
+  }, [cart]);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    setTimeout(() => {
+      document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+    }, 100);
+    return () => obs.disconnect();
+  }, []);
+
+  const addToCart = (item) => {
+    setCart(prev => {
+      const ex = prev.find(i => i.id === item.id);
+      if (ex) return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + 1 } : i);
+      return [...prev, { ...item, qty: 1 }];
+    });
+    setCartOpen(true);
+  };
+
+  const updateCart = (id, qty) => {
+    if (qty <= 0) setCart(prev => prev.filter(i => i.id !== id));
+    else setCart(prev => prev.map(i => i.id === id ? { ...i, qty } : i));
+  };
+
+  const cartCount = cart.reduce((s, i) => s + i.qty, 0);
+
+  return (
+    <div>
+      <Nav cartCount={cartCount} onCart={() => setCartOpen(true)} />
+      <Hero onMenu={() => goTo('menu')} />
+      <FeaturesBar />
+      <MenuSection onAdd={addToCart} />
+      <About />
+      <Location />
+      <Footer />
+
+      {cartOpen && <CartDrawer items={cart} onClose={() => setCartOpen(false)} onUpdate={updateCart} />}
+
+      {/* WhatsApp FAB */}
+      <a href={`https://wa.me/${V.whatsapp}`} target="_blank" style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 900, width: 54, height: 54, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(37,211,102,0.42)', color: 'white', transition: 'transform 0.2s, box-shadow 0.2s' }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(37,211,102,0.55)'; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 20px rgba(37,211,102,0.42)'; }}>
+        <IcoWA size={26} />
+      </a>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
